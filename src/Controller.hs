@@ -21,13 +21,27 @@ input e gstate = return (inputKey e gstate)
 
 inputKey :: Event -> GameState -> GameState
 inputKey (EventKey (SpecialKey k) Down _ _) gstate
-  | k == KeyLeft  = gstate { frog_pos = (fst pos - 30, snd pos), frog_rot = 270 }
-  | k == KeyRight = gstate { frog_pos = (fst pos + 30, snd pos), frog_rot =  90 }
-  | k == KeyUp    = gstate { frog_pos = (fst pos, snd pos + 30), frog_rot =   0 }
-  | k == KeyDown  = gstate { frog_pos = (fst pos, snd pos - 30), frog_rot = 180 }
+  | k == KeyLeft  = (moveX (-30) gstate) { frog_rot = 270 }
+  | k == KeyRight = (moveX   30  gstate) { frog_rot =  90 }
+  | k == KeyUp    = (moveY   30  gstate) { frog_rot =   0 }
+  | k == KeyDown  = (moveY (-30) gstate) { frog_rot = 180 }
   | otherwise     = gstate
     where pos = frog_pos gstate
 inputKey _ gstate = gstate
 
 moveX :: Float -> GameState -> GameState
-moveX = undefined
+moveX x gstate | x < 0 && xpos > (-225 - x) = gstate { frog_pos = (xpos + x, ypos) }
+               | x > 0 && xpos < ( 225 - x) = gstate { frog_pos = (xpos + x, ypos) }
+               | otherwise                  = gstate
+                 where xpos = fst pos
+                       ypos = snd pos
+                       pos  = frog_pos gstate
+
+moveY :: Float -> GameState -> GameState
+moveY y gstate | y < 0 && ypos > (-200 - y) = gstate { frog_pos = (xpos, ypos + y) }
+               | y > 0 && ypos < (ltop - y) = gstate { frog_pos = (xpos, ypos + y) }
+               | otherwise                  = gstate
+                 where xpos = fst pos
+                       ypos = snd pos
+                       pos  = frog_pos gstate
+                       ltop = (fromIntegral (length (level gstate))) * 30 - 200
