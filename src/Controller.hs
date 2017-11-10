@@ -21,10 +21,13 @@ input e gstate = return (inputKey e gstate)
 
 inputKey :: Event -> GameState -> GameState
 inputKey (EventKey (SpecialKey k) Down _ _) gstate
-  | k == KeyLeft  = gstate { frog_pos = (fst pos - 32, snd pos), frog_rot = 270 }
-  | k == KeyRight = gstate { frog_pos = (fst pos + 32, snd pos), frog_rot =  90 }
-  | k == KeyUp    = gstate { frog_pos = (fst pos, snd pos + 32), frog_rot =   0 }
-  | k == KeyDown  = gstate { frog_pos = (fst pos, snd pos - 32), frog_rot = 180 }
+  | k == KeyLeft  = gstate { frog_pos = (fst pos - 30, snd pos), frog_rot = 270 }
+  | k == KeyRight = gstate { frog_pos = (fst pos + 30, snd pos), frog_rot =  90 }
+  | k == KeyUp    = gstate { frog_pos = (fst pos, snd pos + 30), frog_rot =   0 }
+  | k == KeyDown  = gstate { frog_pos = (fst pos, snd pos - 30), frog_rot = 180 }
   | otherwise     = gstate
     where pos = frog_pos gstate
 inputKey _ gstate = gstate
+
+moveX :: Float -> GameState -> GameState
+moveX = undefined

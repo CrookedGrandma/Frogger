@@ -2,6 +2,9 @@
 --   which represent the state of the game
 module Model where
 
+import Parser
+import Types
+
 data InfoToShow = ShowNothing
                 | ShowANumber Int
                 | ShowAChar   Char
@@ -14,7 +17,8 @@ data GameState = GameState {
                  , elapsedTime :: Float
                  , frog_pos    :: (Float, Float)
                  , frog_rot    :: Float
+                 , level       :: [Lane]
                  }
 
 initialState :: GameState
-initialState = GameState ShowNothing 0 (0, 0) 0
+initialState = GameState ShowNothing 0 (0, (-185)) 0 (parseLevel "nrRrRnlLlLnRLn")

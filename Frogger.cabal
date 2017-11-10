@@ -26,4 +26,6 @@ executable Frogger
   default-language:    Haskell2010
   other-modules:       Controller,
                        Model,
-                       View
+                       View,
+                       Parser,
+                       Types
