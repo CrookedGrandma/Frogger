@@ -21,8 +21,9 @@ frog gstate = translate (fst pos) (snd pos) (rotate (frog_rot gstate) frog)
 lanes :: [Lane] -> [Picture]
 lanes []     = []
 lanes (x:xs) = case x of
-                 NoCars    a -> translate 0 (a + 15) (png "src/sprite/restlane.png") : lanes xs
-                 LeftSlow  a -> translate 0 (a + 15) (png "src/sprite/lane.png")     : lanes xs
-                 LeftFast  a -> translate 0 (a + 15) (png "src/sprite/lane.png")     : lanes xs
-                 RightSlow a -> translate 0 (a + 15) (png "src/sprite/lane.png")     : lanes xs
-                 RightFast a -> translate 0 (a + 15) (png "src/sprite/lane.png")     : lanes xs
+                 NoCars    a -> translate 0 a (png "src/sprite/restlane.png")   : lanes xs
+                 LeftSlow  a -> translate 0 a (png "src/sprite/lane.png")       : lanes xs
+                 LeftFast  a -> translate 0 a (png "src/sprite/lane.png")       : lanes xs
+                 RightSlow a -> translate 0 a (png "src/sprite/lane.png")       : lanes xs
+                 RightFast a -> translate 0 a (png "src/sprite/lane.png")       : lanes xs
+                 Finish    a -> translate 0 a (png "src/sprite/finishlane.png") : lanes xs

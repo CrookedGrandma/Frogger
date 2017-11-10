@@ -5,3 +5,4 @@ data Lane = NoCars Float
           | LeftSlow Float
           | RightFast Float
           | RightSlow Float
+          | Finish Float

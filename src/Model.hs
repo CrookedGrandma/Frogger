@@ -21,4 +21,4 @@ data GameState = GameState {
                  }
 
 initialState :: GameState
-initialState = GameState ShowNothing 0 (0, (-185)) 0 (parseLevel "nrRrRnlLlLnRLn")
+initialState = GameState ShowNothing 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLf")
