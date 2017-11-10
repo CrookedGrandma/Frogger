@@ -3,6 +3,7 @@
 module Controller where
 
 import Model
+import Types
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
@@ -38,8 +39,9 @@ moveX x gstate | x < 0 && xpos > (-225 - x) = gstate { frog_pos = (xpos + x, ypo
                        pos  = frog_pos gstate
 
 moveY :: Float -> GameState -> GameState
-moveY y gstate | y < 0 && ypos > (-210 - y) = gstate { frog_pos = (xpos, ypos + y) }
-               | y > 0 && ypos < (ltop - y) = gstate { frog_pos = (xpos, ypos + y) }
+moveY y gstate | y < 0 && ypos > (-210 - y)      = gstate { frog_pos = (xpos, ypos + y) }
+               | y > 0 && ypos < (ltop - 30 - y) = gstate { frog_pos = (xpos, ypos + y) }
+               | y > 0 && ypos > (ltop - 30 - y) = gstate { frog_pos = (xpos, ypos + y), status = Won }
                | otherwise                  = gstate
                  where xpos = fst pos
                        ypos = snd pos

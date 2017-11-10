@@ -18,7 +18,8 @@ data GameState = GameState {
                  , frog_pos    :: (Float, Float)
                  , frog_rot    :: Float
                  , level       :: [Lane]
+                 , status      :: LevelStatus
                  }
 
 initialState :: GameState
-initialState = GameState ShowNothing 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLf")
+initialState = GameState ShowNothing 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLf") InProgress

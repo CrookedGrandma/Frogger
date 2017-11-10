@@ -11,7 +11,8 @@ view :: GameState -> IO Picture
 view = return . viewPure
 
 viewPure :: GameState -> Picture
-viewPure gstate = pictures (lanes (level gstate) ++ [frog gstate])
+viewPure gstate | status gstate == Won = winScreen
+                | otherwise            = pictures (lanes (level gstate) ++ [frog gstate])
 
 frog :: GameState -> Picture
 frog gstate = translate (fst pos) (snd pos) (rotate (frog_rot gstate) frog)
@@ -27,3 +28,7 @@ lanes (x:xs) = case x of
                  RightSlow a -> translate 0 a (png "src/sprite/lane.png")       : lanes xs
                  RightFast a -> translate 0 a (png "src/sprite/lane.png")       : lanes xs
                  Finish    a -> translate 0 a (png "src/sprite/finishlane.png") : lanes xs
+
+
+winScreen :: Picture
+winScreen = png "src/sprite/win.png"
