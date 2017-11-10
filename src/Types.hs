@@ -6,6 +6,7 @@ data Lane = NoCars Float
           | RightFast Float
           | RightSlow Float
           | Finish Float
+  deriving (Eq)
 
 data LevelStatus = InProgress | Won
   deriving (Eq)
