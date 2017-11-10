@@ -31,4 +31,3 @@ inputKey _ gstate = gstate
 
 moveX :: Float -> GameState -> GameState
 moveX = undefined
---test
