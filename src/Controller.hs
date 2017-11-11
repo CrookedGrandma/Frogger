@@ -14,7 +14,7 @@ step :: Float -> GameState -> IO GameState
 step secs gstate
   -- | collision moet hier denk ik
   = -- Just update the elapsed time
-    return gstate { elapsedTime = elapsedTime gstate + secs }
+    return gstate { elapsedTime = elapsedTime gstate + secs, rands = drop 1 (rands gstate)}
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
@@ -27,7 +27,6 @@ inputKey (EventKey (SpecialKey k) Down _ _) gstate
   | k == KeyUp    = (moveY Frog   30  gstate) { frog_rot =   0 }
   | k == KeyDown  = (moveY Frog (-30) gstate) { frog_rot = 180 }
   | otherwise     = gstate
-    where pos = frog_pos gstate
 inputKey _ gstate = gstate
 
 moveX :: Walker -> Float -> GameState -> GameState
