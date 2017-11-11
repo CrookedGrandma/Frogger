@@ -21,10 +21,13 @@ data GameState = GameState {
                  }
 
 initialState :: GameState
-initialState = GameState 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] (randoms (mkStdGen 1))
+initialState = GameState 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 generateCars (randoms (mkStdGen 1))
 
 randomIntTo :: Int -> GameState -> Int
 randomIntTo x gstate = ceiling (head (rands gstate) * fromIntegral x)
 
 randomFloatTo :: Float -> GameState -> Float
 randomFloatTo x gstate = fromIntegral (ceiling (head (rands gstate) * x))
+
+generateCars :: [[Car]]
+generateCars = [[]]
