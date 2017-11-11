@@ -33,13 +33,13 @@ moveCars :: GameState -> [[Car]]
 moveCars gstate = map (map (moveCar gstate)) (cars gstate)
 
 moveCar :: GameState -> Car -> Car
-moveCar gstate (CarL x y s) | x > 240    = CarL (  -300) y s
-                            | anyCTC x y = CarL (x - 30) y s
-                            | otherwise  = CarL (x +  s) y s
+moveCar gstate (CarL x y s) | x > 255    = CarL (                         -300) y s
+                            | anyCTC x y = CarL (-(randomFloatTo 560 gstate (x+560))) y s
+                            | otherwise  = CarL (                        x + s) y s
                               where anyCTC x y = any (carTouchCar x y) (concat (cars gstate))
-moveCar gstate (CarR x y s) | x < (-240) = CarR (   300) y s
-                            | anyCTC x y = CarR (x + 30) y s
-                            | otherwise  = CarR (x -  s) y s
+moveCar gstate (CarR x y s) | x < (-255) = CarR (                          300) y s
+                            | anyCTC x y = CarR (  randomFloatTo 560 gstate (x+100) ) y s
+                            | otherwise  = CarR (                        x - s) y s
                               where anyCTC x y = any (carTouchCar x y) (concat (cars gstate))
 moveCar _      _            = Error
 
