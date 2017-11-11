@@ -49,9 +49,9 @@ moveY y gstate | y < 0 && ypos > (-210 - y)      = gstate { frog_pos = (xpos, yp
                        ltop = (fromIntegral (length (level gstate))) * 30 - 210
 
 calcCam :: Direction -> GameState -> Float
-calcCam d gstate | ypos <= (-105)     = 0
-                 | ypos >= ltop - 285 = camera gstate
+calcCam d gstate | ypos <= (-105)      = 0
+                 | ypos >= ltop - 285  = camera gstate
                  | d == DDown          = ( -75) - ypos
-                 | otherwise          = (-105) - ypos
+                 | otherwise           = (-105) - ypos
                  where ypos = snd (frog_pos gstate)
                        ltop = (fromIntegral (length (level gstate))) * 30 - 210
