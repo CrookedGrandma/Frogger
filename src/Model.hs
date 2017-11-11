@@ -24,7 +24,7 @@ initialState :: GameState
 initialState = GameState 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False
 
 almostInitialState :: GameState -> GameState
-almostInitialState gstate = GameState (elapsedTime gstate) (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False
+almostInitialState gstate = initialState { elapsedTime = elapsedTime gstate }
 
 rands :: GameState -> [Float]
 rands gstate = randoms (mkStdGen (ceiling (elapsedTime gstate)))

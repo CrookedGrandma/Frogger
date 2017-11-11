@@ -12,8 +12,9 @@ import System.Random
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
 step secs gstate
-  | not (started gstate) = return gstate { cars = generateCars (level gstate) gstate, started = True }
-  | otherwise            = return gstate { elapsedTime = elapsedTime gstate + secs, cars = moveCars (cars gstate) }
+  | not (started gstate)  = return gstate { cars = generateCars (level gstate) gstate, started = True }
+  | status gstate == Lost = return (almostInitialState gstate)
+  | otherwise             = return gstate { elapsedTime = elapsedTime gstate + secs, cars = moveCars gstate, status = frogTouchAnyCar gstate }
   
 generateCars :: [Lane] -> GameState -> [[Car]]
 generateCars (x:xs) gstate | null xs   = [[]]
@@ -28,15 +29,36 @@ generateCars' lane gstate = case lane of
                               RightSlow y -> [CarR   (randomFloatTo 560 gstate (y+210))  y 1, CarR   (randomFloatTo 560 gstate (y+211))  y 1, CarR   (randomFloatTo 560 gstate (y+212))  y 1]
                               RightFast y -> [CarR   (randomFloatTo 560 gstate (y+210))  y 2, CarR   (randomFloatTo 560 gstate (y+211))  y 2, CarR   (randomFloatTo 560 gstate (y+212))  y 2]
 
-moveCars :: [[Car]] -> [[Car]]
-moveCars c = map (map moveCar) c
+moveCars :: GameState -> [[Car]]
+moveCars gstate = map (map (moveCar gstate)) (cars gstate)
 
-moveCar :: Car -> Car
-moveCar (CarL x y s) | x > 240    = CarL ( -300) y s
-                     | otherwise  = CarL (x + s) y s
-moveCar (CarR x y s) | x < (-240) = CarR    300  y s
-                     | otherwise  = CarR (x - s) y s
-moveCar _            = Error
+moveCar :: GameState -> Car -> Car
+moveCar gstate (CarL x y s) | x > 240    = CarL (  -300) y s
+                            | anyCTC x y = CarL (x - 30) y s
+                            | otherwise  = CarL (x +  s) y s
+                              where anyCTC x y = any (carTouchCar x y) (concat (cars gstate))
+moveCar gstate (CarR x y s) | x < (-240) = CarR (   300) y s
+                            | anyCTC x y = CarR (x + 30) y s
+                            | otherwise  = CarR (x -  s) y s
+                              where anyCTC x y = any (carTouchCar x y) (concat (cars gstate))
+moveCar _      _            = Error
+
+carTouchCar :: Float -> Float -> Car -> Bool
+carTouchCar x1 y1 (CarL x y _) = (y1 == y) && (x1 >= x - 60) && (x1 <= x + 60) && (x1 /= x)
+carTouchCar x1 y1 (CarR x y _) = (y1 == y) && (x1 >= x - 60) && (x1 <= x + 60) && (x1 /= x)
+carTouchCar _  _   _           = False
+
+frogTouchAnyCar :: GameState -> LevelStatus
+frogTouchAnyCar gstate | any (frogTouchCar xpos ypos) (concat (cars gstate)) = Lost
+                       | otherwise                                           = status gstate
+                           where xpos = fst pos
+                                 ypos = snd pos
+                                 pos  = frog_pos gstate
+
+frogTouchCar :: Float -> Float -> Car -> Bool
+frogTouchCar xpos ypos (CarL x y _) = (ypos == y) && (xpos >= x - 45) && (xpos <= x + 45)
+frogTouchCar xpos ypos (CarR x y _) = (ypos == y) && (xpos >= x - 45) && (xpos <= x + 45)
+frogTouchCar _    _     _           = False
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
