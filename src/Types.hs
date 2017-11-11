@@ -13,3 +13,6 @@ data LevelStatus = InProgress | Won | Lost
 
 data Direction = DUp | DDown
   deriving (Eq)
+
+data Walker = Frog | Shrew
+  deriving (Eq)
