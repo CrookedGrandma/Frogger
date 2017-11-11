@@ -17,5 +17,7 @@ data Direction = DUp | DDown
 data Walker = Frog | Shrew
   deriving (Eq)
 
-data Car = Car Float Float Float --Car X Y Speed
+data Car = CarL Float Float Float --Car X Y Speed
+         | CarR Float Float Float
+         | Error
   deriving (Eq)

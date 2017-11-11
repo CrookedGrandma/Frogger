@@ -17,17 +17,21 @@ data GameState = GameState {
                  , status      :: LevelStatus
                  , camera      :: Float
                  , cars        :: [[Car]]
-                 , rands       :: [Float]
+                 , started     :: Bool
                  }
 
 initialState :: GameState
-initialState = GameState 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 generateCars (randoms (mkStdGen 1))
+initialState = GameState 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False
 
-randomIntTo :: Int -> GameState -> Int
-randomIntTo x gstate = ceiling (head (rands gstate) * fromIntegral x)
+almostInitialState :: GameState -> GameState
+almostInitialState gstate = GameState (elapsedTime gstate) (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False
 
-randomFloatTo :: Float -> GameState -> Float
-randomFloatTo x gstate = fromIntegral (ceiling (head (rands gstate) * x))
+rands :: GameState -> [Float]
+rands gstate = randoms (mkStdGen (ceiling (elapsedTime gstate)))
 
-generateCars :: [[Car]]
-generateCars = [[]]
+-- | random number from 1 to x, at rands index y
+randomIntTo :: Int -> GameState -> Int -> Int
+randomIntTo x gstate y = ceiling ((rands gstate !! y) * fromIntegral x)
+-- | random number from 1 to x, at rands index y
+randomFloatTo :: Float -> GameState -> Float -> Float
+randomFloatTo x gstate y = fromIntegral (ceiling ((rands gstate !! ceiling y) * x))

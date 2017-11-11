@@ -3,14 +3,14 @@ module Parser where
 import Types
 
 parseLevel :: String -> [Lane]
-parseLevel s = parseString s (-195)
+parseLevel s = parseLevel' s (-195)
 
-parseString :: String -> Float -> [Lane]
-parseString [] _     = []
-parseString (x:xs) a | x == 'n'  = NoCars    a : parseString xs (a + 30)
-                     | x == 'l'  = LeftSlow  a : parseString xs (a + 30)
-                     | x == 'L'  = LeftFast  a : parseString xs (a + 30)
-                     | x == 'r'  = RightSlow a : parseString xs (a + 30)
-                     | x == 'R'  = RightFast a : parseString xs (a + 30)
+parseLevel' :: String -> Float -> [Lane]
+parseLevel' [] _     = []
+parseLevel' (x:xs) a | x == 'n'  = NoCars    a : parseLevel' xs (a + 30)
+                     | x == 'l'  = LeftSlow  a : parseLevel' xs (a + 30)
+                     | x == 'L'  = LeftFast  a : parseLevel' xs (a + 30)
+                     | x == 'r'  = RightSlow a : parseLevel' xs (a + 30)
+                     | x == 'R'  = RightFast a : parseLevel' xs (a + 30)
                      | x == 'f'  = [Finish a]
-                     | otherwise =               parseString xs  a
+                     | otherwise =               parseLevel' xs  a

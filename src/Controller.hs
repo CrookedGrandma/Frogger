@@ -12,9 +12,31 @@ import System.Random
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
 step secs gstate
-  -- | collision moet hier denk ik
-  = -- Just update the elapsed time
-    return gstate { elapsedTime = elapsedTime gstate + secs, rands = drop 1 (rands gstate)}
+  | not (started gstate) = return gstate { cars = generateCars (level gstate) gstate, started = True }
+  | otherwise            = return gstate { elapsedTime = elapsedTime gstate + secs, cars = moveCars (cars gstate) }
+  
+generateCars :: [Lane] -> GameState -> [[Car]]
+generateCars (x:xs) gstate | null xs   = [[]]
+                           | otherwise = generateCars' x gstate : generateCars xs gstate
+
+generateCars' :: Lane -> GameState -> [Car]
+generateCars' lane gstate = case lane of
+                              NoCars    _ -> []
+                              Finish    _ -> []
+                              LeftSlow  y -> [CarL (-(randomFloatTo 560 gstate (y+210))) y 1, CarL (-(randomFloatTo 560 gstate (y+211))) y 1, CarL (-(randomFloatTo 560 gstate (y+212))) y 1]
+                              LeftFast  y -> [CarL (-(randomFloatTo 560 gstate (y+210))) y 2, CarL (-(randomFloatTo 560 gstate (y+211))) y 2, CarL (-(randomFloatTo 560 gstate (y+212))) y 2]
+                              RightSlow y -> [CarR   (randomFloatTo 560 gstate (y+210))  y 1, CarR   (randomFloatTo 560 gstate (y+211))  y 1, CarR   (randomFloatTo 560 gstate (y+212))  y 1]
+                              RightFast y -> [CarR   (randomFloatTo 560 gstate (y+210))  y 2, CarR   (randomFloatTo 560 gstate (y+211))  y 2, CarR   (randomFloatTo 560 gstate (y+212))  y 2]
+
+moveCars :: [[Car]] -> [[Car]]
+moveCars c = map (map moveCar) c
+
+moveCar :: Car -> Car
+moveCar (CarL x y s) | x > 240    = CarL ( -300) y s
+                     | otherwise  = CarL (x + s) y s
+moveCar (CarR x y s) | x < (-240) = CarR    300  y s
+                     | otherwise  = CarR (x - s) y s
+moveCar _            = Error
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState

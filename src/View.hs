@@ -12,12 +12,12 @@ view = return . viewPure
 
 viewPure :: GameState -> Picture
 viewPure gstate | status gstate == Won = winScreen
-                | otherwise            = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [frog gstate]))
+                | otherwise            = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [viewCars gstate] ++ [frog gstate])) -- ++ [(text.show) (randomIntTo 100 gstate)]
 
 frog :: GameState -> Picture
-frog gstate = translate (fst pos) (snd pos) (rotate (frog_rot gstate) frog)
-  where pos  = frog_pos gstate
-        frog = png "src/sprite/frog_small.png"
+frog gstate = translate (fst pos) (snd pos) (rotate (frog_rot gstate) frogi)
+  where pos   = frog_pos gstate
+        frogi = png "src/sprite/frog_small.png"
 
 lanes :: [Lane] -> [Picture]
 lanes []     = []
@@ -32,3 +32,17 @@ lanes (x:xs) = case x of
 
 winScreen :: Picture
 winScreen = png "src/sprite/win.png"
+
+viewCars :: GameState -> Picture
+viewCars gstate = pictures (map viewCar (concat (cars gstate)))
+
+viewCar :: Car -> Picture
+viewCar (CarL x y _) = translate x y carL
+viewCar (CarR x y _) = translate x y carR
+viewCar _            = blank
+
+carL :: Picture
+carL = png "src/sprite/car_l.png"
+
+carR :: Picture
+carR = png "src/sprite/car_r.png"
