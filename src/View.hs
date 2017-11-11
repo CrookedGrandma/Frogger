@@ -12,7 +12,7 @@ view = return . viewPure
 
 viewPure :: GameState -> Picture
 viewPure gstate | status gstate == Won = winScreen
-                | otherwise            = pictures (lanes (level gstate) ++ [frog gstate])
+                | otherwise            = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [frog gstate]))
 
 frog :: GameState -> Picture
 frog gstate = translate (fst pos) (snd pos) (rotate (frog_rot gstate) frog)

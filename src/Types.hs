@@ -10,3 +10,6 @@ data Lane = NoCars Float
 
 data LevelStatus = InProgress | Won | Lost
   deriving (Eq)
+
+data Direction = DUp | DDown
+  deriving (Eq)
