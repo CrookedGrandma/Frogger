@@ -8,5 +8,5 @@ data Lane = NoCars Float
           | Finish Float
   deriving (Eq)
 
-data LevelStatus = InProgress | Won
+data LevelStatus = InProgress | Won | Lost
   deriving (Eq)
