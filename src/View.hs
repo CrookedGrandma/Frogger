@@ -7,6 +7,8 @@ import Graphics.Gloss.Game
 import Model
 import Types
 import Scores
+import Frog
+import Car
 
 view :: GameState -> IO Picture
 view gstate | highScreen gstate = do
@@ -21,13 +23,12 @@ viewPure gstate | highScreen gstate       = highScoreScreen
                 | status gstate == Won    = winScreen
                 | status gstate == Paused = pictures (gameV : [pauseScreen])
                 | otherwise               = gameV
-                  where gameV = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [viewCars gstate] ++ [frog gstate]))
+                  where gameV = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [viewCars gstate] ++ [frog gstate] ++ [shrew gstate]))
 
---Returns a picture of a frog on the position of the frog
-frog :: GameState -> Picture
-frog gstate = translate (fst pos) (snd pos) (rotate (frog_rot gstate) frogi)
-  where pos   = frog_pos gstate
-        frogi = png ("src/sprite/" ++ frog_png gstate)
+shrew :: GameState -> Picture
+shrew gstate = translate (fst pos) (snd pos) (rotate (shrew_rot gstate) shrewi)
+  where pos    = shrew_pos gstate
+        shrewi = png "src/sprite/shrew.png"
 
 --Returns a list of pictures of different lanes
 lanes :: [Lane] -> [Picture]
@@ -50,17 +51,3 @@ pauseScreen = png "src/sprite/pause.png"
 
 highScoreScreen :: Picture
 highScoreScreen = png "src/sprite/high.png"
-
---Produces a picture containing a picture for every car
-viewCars :: GameState -> Picture
-viewCars gstate = pictures (map viewCar (concat (cars gstate)))
-
---Returns a picture of a car based its position and direction
-viewCar :: Car -> Picture
-viewCar (CarL x y _) = translate x y carL
-                         where carL = png "src/sprite/car_l.png"
-viewCar (CarR x y _) = translate x y carR
-                         where carR = png "src/sprite/car_r.png"
-viewCar _            = blank
-
-                             

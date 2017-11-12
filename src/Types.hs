@@ -11,7 +11,7 @@ data Lane = NoCars Float
 data LevelStatus = InProgress | Won | Losing | Lost | Paused
   deriving (Eq)
 
-data Direction = DUp | DDown
+data Direction = DUp | DDown | DLeft | DRight
   deriving (Eq)
 
 data Walker = Frog | Shrew

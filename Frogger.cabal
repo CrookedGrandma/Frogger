@@ -29,4 +29,7 @@ executable Frogger
                        View,
                        Parser,
                        Types,
-                       Scores
+                       Scores,
+                       Frog,
+                       Car,
+                       Movement
