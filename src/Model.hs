@@ -18,11 +18,15 @@ data GameState = GameState {
                  , started     :: Bool
                  , loseTimer   :: Float
                  , loseImage   :: Int
+                 , score       :: Int
+                 , loseScore   :: Int
+                 , highestY    :: Float
+                 , savedScore  :: Bool
                  }
 
 --The level/game is made
 initialState :: GameState
-initialState = GameState 0 (0, (-195)) 0 "frog.png" (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False 0 1
+initialState = GameState 0 (0, (-195)) 0 "frog.png" (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False 0 1 0 0 0 False
 
 almostInitialState :: GameState -> GameState
 almostInitialState gstate = initialState { elapsedTime = elapsedTime gstate }

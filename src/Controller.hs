@@ -8,16 +8,40 @@ import Types
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
+import System.Directory
+import Data.List
 
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
 step secs gstate
-  | not (started gstate)        = return gstate { cars = generateCars (level gstate) gstate, started = True }
+  | not (started gstate)        = return gstate { cars = generateCars (level gstate) gstate, highestY = snd (frog_pos gstate), started = True }
   | status gstate == InProgress = return (frogPNG secs (stepGState { status = frogTouchAnyCar gstate }))
-  | status gstate == Lost       = return (almostInitialState gstate)
+  | status gstate == Lost       = return (almostInitialState gstate) { loseScore = loseScore gstate + 10}
   | status gstate == Paused     = return gstate
+  | status gstate == Won        = if not (savedScore gstate) then 
+                                    do
+                                    oldscores <- readFile "src/score/score.txt"
+                                    writeFile "src/score/newscore.txt" (newScores gstate oldscores)
+                                    removeFile "src/score/score.txt"
+                                    renameFile "src/score/newscore.txt" "src/score/score.txt"
+                                    return gstate { savedScore = True }
+                                  else
+                                    return gstate
   | otherwise                   = return (frogPNG secs stepGState)
     where stepGState = gstate { elapsedTime = elapsedTime gstate + secs, cars = moveCars gstate }
+
+--Determines what to write in the list of scores
+newScores :: GameState -> String -> String
+newScores gstate s = unlines (map show (sortBy (flip compare) (yourScore : map convert (lines s))))
+                     where yourScore = calcScore gstate
+
+--Convert string to int
+convert :: String -> Int
+convert s = let i = read s :: Int in i
+
+--Calculates the end score based on amount of lanes, amount of fails, and elapsed time
+calcScore :: GameState -> Int
+calcScore gstate = score gstate - loseScore gstate - floor (elapsedTime gstate) * 2
 
 --Returns the gamestate with a normal frog unless the player is losing, then returns a short animation
 frogPNG :: Float -> GameState -> GameState
@@ -121,16 +145,18 @@ moveX w x gstate = case w of
 moveY :: Walker -> Float -> GameState -> GameState
 moveY w y gstate = case w of
                      Frog
-                       | y < 0 && ypos > (-210 - y)      -> gstate { frog_pos = (xpos, ypos + y), camera = calcCam DDown gstate }
-                       | y > 0 && ypos < (ltop - 30 - y) -> gstate { frog_pos = (xpos, ypos + y), camera = calcCam   DUp gstate }
-                       | y > 0 && ypos > (ltop - 30 - y) -> gstate { frog_pos = (xpos, ypos + y), camera = calcCam   DUp gstate, status = Won }
-                       | otherwise                       -> gstate
+                       | y < 0 && ypos > (-210 - y)                                -> gstate { frog_pos = (xpos, newy), camera = calcCam DDown gstate }
+                       | y > 0 && ypos < (ltop - 30 - y) && newy > highestY gstate -> gstate { frog_pos = (xpos, newy), camera = calcCam   DUp gstate, score = score gstate + 10, highestY = newy }
+                       | y > 0 && ypos < (ltop - 30 - y)                           -> gstate { frog_pos = (xpos, newy), camera = calcCam   DUp gstate }
+                       | y > 0 && ypos > (ltop - 30 - y)                           -> gstate { frog_pos = (xpos, newy), camera = calcCam   DUp gstate, status = Won }
+                       | otherwise                                                 -> gstate
                      Shrew
                        -> gstate
                      where xpos = fst pos
                            ypos = snd pos
                            pos  = frog_pos gstate
                            ltop = (fromIntegral (length (level gstate))) * 30 - 210
+                           newy = ypos + y
 
 --This is a function for the camera that follows the frog throughout the game
 calcCam :: Direction -> GameState -> Float
