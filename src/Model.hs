@@ -27,13 +27,13 @@ initialState = GameState 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf")
 almostInitialState :: GameState -> GameState
 almostInitialState gstate = initialState { elapsedTime = elapsedTime gstate }
 
---I do not understand what this does
+--Produces a list of random Floats based on the elapsed time
 rands :: GameState -> [Float]
 rands gstate = randoms (mkStdGen (ceiling (elapsedTime gstate)))
 
--- | random number from 1 to x, at rands index y
+-- Random number from 1 to x, at rands index y
 randomIntTo :: Int -> GameState -> Int -> Int
 randomIntTo x gstate y = ceiling ((rands gstate !! y) * fromIntegral x)
--- | random number from 1 to x, at rands index y
+-- Random number from 1 to x, at rands index y
 randomFloatTo :: Float -> GameState -> Float -> Float
 randomFloatTo x gstate y = fromIntegral (ceiling ((rands gstate !! ceiling y) * x))
