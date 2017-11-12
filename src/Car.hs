@@ -29,11 +29,11 @@ moveCar :: GameState -> Car -> Car
 moveCar gstate (CarL x y s) | x > 255    = CarL (                             -300)   y s
                             | anyCTC x y = CarL (-(randomFloatTo 560 gstate (x+560))) y s
                             | otherwise  = CarL (                            x + s)   y s
-                            where anyCTC x y = any (carTouchCar x y) (concat (cars gstate))
+                            where anyCTC x y = any (carTouchCar x y) (allCars gstate)
 moveCar gstate (CarR x y s) | x < (-255) = CarR (                              300)   y s
                             | anyCTC x y = CarR (  randomFloatTo 560 gstate (x+100) ) y s
                             | otherwise  = CarR (                            x - s)   y s
-                            where anyCTC x y = any (carTouchCar x y) (concat (cars gstate))
+                            where anyCTC x y = any (carTouchCar x y) (allCars gstate)
 moveCar _      _            = Error
 
 --Checks if a car touches another car
@@ -44,7 +44,7 @@ carTouchCar _  _   _           = False
 
 --Produces a picture containing a picture for every car
 viewCars :: GameState -> Picture
-viewCars gstate = pictures (map viewCar (concat (cars gstate)))
+viewCars gstate = pictures (map viewCar (allCars gstate))
 
 --Returns a picture of a car based its position and direction
 viewCar :: Car -> Picture
@@ -53,3 +53,7 @@ viewCar (CarL x y _) = translate x y carL
 viewCar (CarR x y _) = translate x y carR
                          where carR = png "src/sprite/car_r.png"
 viewCar _            = blank
+
+--Returns a list of all cars
+allCars :: GameState -> [Car]
+allCars gstate = concat (cars gstate)

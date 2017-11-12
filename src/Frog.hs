@@ -2,6 +2,7 @@ module Frog where
 
 import Model
 import Types
+import Car
 import Graphics.Gloss
 import Graphics.Gloss.Game
 
@@ -25,9 +26,9 @@ losingFrog gstate | loseImage gstate >    5 = gstate { status = Lost }
                     
 --Checks the collision between the frog and car, if collision is detected the frog dies and has to start over.
 frogTouchAnyCar :: GameState -> LevelStatus
-frogTouchAnyCar gstate | status gstate == Losing                             = Losing
-                        | any (frogTouchCar xpos ypos) (concat (cars gstate)) = Losing
-                        | otherwise                                           = status gstate
+frogTouchAnyCar gstate | status gstate == Losing                       = Losing
+                       | any (frogTouchCar xpos ypos) (allCars gstate) = Losing
+                       | otherwise                                     = status gstate
                             where xpos = fst pos
                                   ypos = snd pos
                                   pos  = frog_pos gstate

@@ -23,7 +23,7 @@ viewPure gstate | highScreen gstate       = highScoreScreen
                 | status gstate == Won    = winScreen
                 | status gstate == Paused = pictures (gameV : [pauseScreen])
                 | otherwise               = gameV
-                  where gameV = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [viewCars gstate] ++ [frog gstate] ++ [shrew gstate]))
+                  where gameV = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [shrew gstate] ++ [viewCars gstate] ++ [frog gstate]))
 
 shrew :: GameState -> Picture
 shrew gstate = translate (fst pos) (snd pos) (rotate (shrew_rot gstate) shrewi)
