@@ -44,12 +44,9 @@ viewCars gstate = pictures (map viewCar (concat (cars gstate)))
 --Returns a picture of a car based its position and direction
 viewCar :: Car -> Picture
 viewCar (CarL x y _) = translate x y carL
+                         where carL = png "src/sprite/car_l.png"
 viewCar (CarR x y _) = translate x y carR
+                         where carR = png "src/sprite/car_r.png"
 viewCar _            = blank
 
---Just pictures
-carL :: Picture
-carL = png "src/sprite/car_l.png"
-
-carR :: Picture
-carR = png "src/sprite/car_r.png"
+                             
