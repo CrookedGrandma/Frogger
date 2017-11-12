@@ -6,23 +6,23 @@ import Parser
 import Types
 import System.Random
 
-nO_SECS_BETWEEN_CYCLES :: Float
-nO_SECS_BETWEEN_CYCLES = 5
-
 data GameState = GameState {
                    elapsedTime :: Float
                  , frog_pos    :: (Float, Float)
                  , frog_rot    :: Float
+                 , frog_png    :: String
                  , level       :: [Lane]
                  , status      :: LevelStatus
                  , camera      :: Float
                  , cars        :: [[Car]]
                  , started     :: Bool
+                 , loseTimer   :: Float
+                 , loseImage   :: Int
                  }
 
 --The level/game is made
 initialState :: GameState
-initialState = GameState 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False
+initialState = GameState 0 (0, (-195)) 0 "frog.png" (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False 0 1
 
 almostInitialState :: GameState -> GameState
 almostInitialState gstate = initialState { elapsedTime = elapsedTime gstate }

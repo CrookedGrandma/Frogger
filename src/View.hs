@@ -19,7 +19,7 @@ viewPure gstate | status gstate == Won = winScreen
 frog :: GameState -> Picture
 frog gstate = translate (fst pos) (snd pos) (rotate (frog_rot gstate) frogi)
   where pos   = frog_pos gstate
-        frogi = png "src/sprite/frog_small.png"
+        frogi = png ("src/sprite/" ++ frog_png gstate)
 
 --Returns a list of pictures of different lanes
 lanes :: [Lane] -> [Picture]

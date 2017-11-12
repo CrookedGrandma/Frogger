@@ -12,9 +12,21 @@ import System.Random
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
 step secs gstate
-  | not (started gstate)  = return gstate { cars = generateCars (level gstate) gstate, started = True }
-  | status gstate == Lost = return (almostInitialState gstate)
-  | otherwise             = return gstate { elapsedTime = elapsedTime gstate + secs, cars = moveCars gstate, status = frogTouchAnyCar gstate }
+  | not (started gstate)        = return gstate { cars = generateCars (level gstate) gstate, started = True }
+  | status gstate == InProgress = return (frogPNG secs (stepGState { status = frogTouchAnyCar gstate }))
+  | status gstate == Lost       = return (almostInitialState gstate)
+  | otherwise                   = return (frogPNG secs stepGState)
+    where stepGState = gstate { elapsedTime = elapsedTime gstate + secs, cars = moveCars gstate }
+
+frogPNG :: Float -> GameState -> GameState
+frogPNG secs gstate | status gstate == InProgress = gstate { frog_png = "frog.png" }
+                    | status gstate == Won        = gstate { frog_png = "frog.png" }
+                    | otherwise                   = losingFrog (gstate { loseTimer = loseTimer gstate + secs })
+
+losingFrog :: GameState -> GameState
+losingFrog gstate | loseImage gstate >    5 = gstate { status = Lost }
+                  | loseTimer gstate >= 0.2 = gstate { frog_png = "frog_d" ++ show (loseImage gstate) ++ ".png", loseImage = loseImage gstate + 1, loseTimer = 0 }
+                  | otherwise               = gstate
   
 --Produce a list of cars for every lane
 generateCars :: [Lane] -> GameState -> [[Car]]
@@ -55,7 +67,8 @@ carTouchCar _  _   _           = False
 
 --Checks the collision between the frog and car, if collision is detected the frog dies and has to start over.
 frogTouchAnyCar :: GameState -> LevelStatus
-frogTouchAnyCar gstate | any (frogTouchCar xpos ypos) (concat (cars gstate)) = Lost
+frogTouchAnyCar gstate | status gstate == Losing                             = Losing
+                       | any (frogTouchCar xpos ypos) (concat (cars gstate)) = Losing
                        | otherwise                                           = status gstate
                            where xpos = fst pos
                                  ypos = snd pos
@@ -73,10 +86,10 @@ input e gstate = return (inputKey e gstate)
 
 inputKey :: Event -> GameState -> GameState
 inputKey (EventKey (SpecialKey k) Down _ _) gstate
-  | k == KeyLeft  = (moveX Frog (-30) gstate) { frog_rot = 270 }
-  | k == KeyRight = (moveX Frog   30  gstate) { frog_rot =  90 }
-  | k == KeyUp    = (moveY Frog   30  gstate) { frog_rot =   0 }
-  | k == KeyDown  = (moveY Frog (-30) gstate) { frog_rot = 180 }
+  | status gstate == InProgress && k == KeyLeft  = (moveX Frog (-30) gstate) { frog_rot = 270 }
+  | status gstate == InProgress && k == KeyRight = (moveX Frog   30  gstate) { frog_rot =  90 }
+  | status gstate == InProgress && k == KeyUp    = (moveY Frog   30  gstate) { frog_rot =   0 }
+  | status gstate == InProgress && k == KeyDown  = (moveY Frog (-30) gstate) { frog_rot = 180 }
   | otherwise     = gstate
 inputKey _ gstate = gstate
 
