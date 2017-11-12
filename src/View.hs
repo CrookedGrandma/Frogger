@@ -17,8 +17,8 @@ view gstate | highScreen gstate = do
 
 --All the things that are eventually put on the screen
 viewPure :: GameState -> Picture
-viewPure gstate | status gstate == Won    = winScreen
-                | highScreen gstate       = highScoreScreen
+viewPure gstate | highScreen gstate       = highScoreScreen
+                | status gstate == Won    = winScreen
                 | status gstate == Paused = pictures (gameV : [pauseScreen])
                 | otherwise               = gameV
                   where gameV = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [viewCars gstate] ++ [frog gstate]))

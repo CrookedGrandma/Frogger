@@ -27,5 +27,14 @@ writeScores gstate = do
                      removeFile "src/score/score.txt"
                      renameFile "src/score/newscore.txt" "src/score/score.txt"
 
+--Returns the top 5 scores in Picture format
 pictureScores :: IO Picture
-pictureScores = return (png "src/sprite/frog.png")
+pictureScores = do
+                rawScores <- readScores
+                let firstScores = take 5 (lines rawScores)
+                return (pictures (scores firstScores 90 1))
+
+--Makes the strings into Pictures at the right scale and position
+scores :: [String] -> Float -> Int -> [Picture]
+scores [] _ _     = []
+scores (x:xs) y p = translate (-100) y (scale 0.5 0.5 (text (show p ++ ". " ++ x))) : scores xs (y-69) (p+1)=
