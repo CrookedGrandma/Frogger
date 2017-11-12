@@ -10,10 +10,12 @@ import Types
 view :: GameState -> IO Picture
 view = return . viewPure
 
+--All the things that are eventually put on the screen
 viewPure :: GameState -> Picture
 viewPure gstate | status gstate == Won = winScreen
                 | otherwise            = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [viewCars gstate] ++ [frog gstate])) -- ++ [(text.show) (randomIntTo 100 gstate)]
 
+--The frog state is here updated, so it can be correctly put on the screen.
 frog :: GameState -> Picture
 frog gstate = translate (fst pos) (snd pos) (rotate (frog_rot gstate) frogi)
   where pos   = frog_pos gstate
@@ -36,6 +38,7 @@ winScreen = png "src/sprite/win.png"
 viewCars :: GameState -> Picture
 viewCars gstate = pictures (map viewCar (concat (cars gstate)))
 
+--This is cars moving (? I do not really understand what the upper line means and this one..)
 viewCar :: Car -> Picture
 viewCar (CarL x y _) = translate x y carL
 viewCar (CarR x y _) = translate x y carR
