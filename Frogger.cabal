@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                Frogger
-version:             0.1.0.0
+version:             1.0.0.0
 synopsis:            Frogger but in Haskell
 -- description:         
 license:             AllRightsReserved
