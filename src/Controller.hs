@@ -15,14 +15,17 @@ step secs gstate
   | not (started gstate)        = return gstate { cars = generateCars (level gstate) gstate, started = True }
   | status gstate == InProgress = return (frogPNG secs (stepGState { status = frogTouchAnyCar gstate }))
   | status gstate == Lost       = return (almostInitialState gstate)
+  | status gstate == Paused     = return gstate
   | otherwise                   = return (frogPNG secs stepGState)
     where stepGState = gstate { elapsedTime = elapsedTime gstate + secs, cars = moveCars gstate }
 
+--Returns the gamestate with a normal frog unless the player is losing, then returns a short animation
 frogPNG :: Float -> GameState -> GameState
 frogPNG secs gstate | status gstate == InProgress = gstate { frog_png = "frog.png" }
                     | status gstate == Won        = gstate { frog_png = "frog.png" }
                     | otherwise                   = losingFrog (gstate { loseTimer = loseTimer gstate + secs })
 
+--Cycles through animation images
 losingFrog :: GameState -> GameState
 losingFrog gstate | loseImage gstate >    5 = gstate { status = Lost }
                   | loseTimer gstate >= 0.2 = gstate { frog_png = "frog_d" ++ show (loseImage gstate) ++ ".png", loseImage = loseImage gstate + 1, loseTimer = 0 }
@@ -90,8 +93,17 @@ inputKey (EventKey (SpecialKey k) Down _ _) gstate
   | status gstate == InProgress && k == KeyRight = (moveX Frog   30  gstate) { frog_rot =  90 }
   | status gstate == InProgress && k == KeyUp    = (moveY Frog   30  gstate) { frog_rot =   0 }
   | status gstate == InProgress && k == KeyDown  = (moveY Frog (-30) gstate) { frog_rot = 180 }
-  | otherwise     = gstate
-inputKey _ gstate = gstate
+  | otherwise                                    = gstate
+inputKey (EventKey (Char k) Down _ _) gstate
+  | k == 'p'                                     = pause gstate
+  | otherwise                                    = gstate
+inputKey _ gstate                                = gstate
+
+--Pause or unpause
+pause :: GameState -> GameState
+pause gstate | status gstate == InProgress = gstate { status = Paused }
+             | status gstate == Paused     = gstate { status = InProgress }
+             | otherwise                   = gstate
 
 --These 2 functions deal with the frog (or Shrew) moving.
 moveX :: Walker -> Float -> GameState -> GameState

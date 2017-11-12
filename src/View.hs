@@ -12,8 +12,10 @@ view = return . viewPure
 
 --All the things that are eventually put on the screen
 viewPure :: GameState -> Picture
-viewPure gstate | status gstate == Won = winScreen
-                | otherwise            = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [viewCars gstate] ++ [frog gstate]))
+viewPure gstate | status gstate == Won    = winScreen
+                | status gstate == Paused = pictures (gameV : [pauseScreen])
+                | otherwise               = gameV
+                  where gameV = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [viewCars gstate] ++ [frog gstate]))
 
 --Returns a picture of a frog on the position of the frog
 frog :: GameState -> Picture
@@ -33,9 +35,12 @@ lanes (x:xs) = case x of
                  Finish    a -> translate 0 a (png "src/sprite/finishlane.png") : lanes xs
 
 
---Just a picture
+--Just pictures
 winScreen :: Picture
 winScreen = png "src/sprite/win.png"
+
+pauseScreen :: Picture
+pauseScreen = png "src/sprite/pause.png"
 
 --Produces a picture containing a picture for every car
 viewCars :: GameState -> Picture

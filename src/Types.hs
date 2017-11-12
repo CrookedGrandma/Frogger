@@ -8,7 +8,7 @@ data Lane = NoCars Float
           | Finish Float
   deriving (Eq)
 
-data LevelStatus = InProgress | Won | Losing | Lost
+data LevelStatus = InProgress | Won | Losing | Lost | Paused
   deriving (Eq)
 
 data Direction = DUp | DDown
