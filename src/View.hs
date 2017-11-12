@@ -13,11 +13,12 @@ import Graphics.Gloss
 import Graphics.Gloss.Game
 
 view :: GameState -> IO Picture
-view gstate | highScreen gstate = do
-                                  let gameScreen = viewPure gstate
-                                  scores <- pictureScores
-                                  return (pictures (gameScreen : [scores]))
-            | otherwise         = return (pictures (viewPure gstate : [pictureScore gstate]))
+view gstate | highScreen gstate      = do
+                                       let gameScreen = viewPure gstate
+                                       scores <- pictureScores
+                                       return (pictures (gameScreen : [scores]))
+            | status gstate == Intro = return (viewPure gstate)
+            | otherwise              = return (pictures (viewPure gstate : [pictureScore gstate]))
 
 --All the things that are eventually put on the screen
 viewPure :: GameState -> Picture
