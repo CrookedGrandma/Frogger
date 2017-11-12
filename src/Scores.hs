@@ -37,4 +37,4 @@ pictureScores = do
 --Makes the strings into Pictures at the right scale and position
 scores :: [String] -> Float -> Int -> [Picture]
 scores [] _ _     = []
-scores (x:xs) y p = translate (-100) y (scale 0.5 0.5 (text (show p ++ ". " ++ x))) : scores xs (y-69) (p+1)=
+scores (x:xs) y p = translate (-100) y (scale 0.5 0.5 (text (show p ++ ". " ++ x))) : scores xs (y-69) (p+1)
