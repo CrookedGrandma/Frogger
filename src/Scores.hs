@@ -1,6 +1,7 @@
 module Scores where
 
 import Model
+
 import Data.List
 import Graphics.Gloss
 import Graphics.Gloss.Game

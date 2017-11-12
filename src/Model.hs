@@ -4,6 +4,7 @@ module Model where
 
 import Parser
 import Types
+
 import System.Random
 
 data GameState = GameState {

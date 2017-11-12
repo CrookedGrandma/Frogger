@@ -6,6 +6,7 @@ import Model
 import Types
 import Scores
 import Frog
+import Shrew
 import Car
 import Movement
 
@@ -28,47 +29,6 @@ step secs gstate
                                     return gstate
   | otherwise                   = return (frogPNG secs stepGState)
     where stepGState = gstate { elapsedTime = elapsedTime gstate + secs, cars = moveCars gstate }
-
---Handle spawning and movement of the shrew
-handleShrew :: Float -> GameState -> GameState
-handleShrew secs gstate | shrewTimer gstate < 5                              = gstate { shrewTimer = shrewTimer gstate + secs }
-                        | shrewTimer gstate > 5 && not (shrewSpawned gstate) = gstate { shrew_pos = (0, (-195)), shrewSpawned = True, shrewTimer = 10 }
-                        | moveTimer gstate < 1                               = gstate { moveTimer = moveTimer gstate + secs}
-                        | not (shrewTouchAnyCar xshrew (yshrew + 30) gstate) = shrewMove DUp gstate
-                        | lastMove gstate == DUp                             = if not (shrewTouchAnyCar (xshrew + 30) yshrew gstate) then
-                                                                                 shrewMove DRight gstate
-                                                                               else
-                                                                                 if not (shrewTouchAnyCar (xshrew - 30) yshrew gstate) then
-                                                                                   shrewMove DLeft gstate
-                                                                                 else
-                                                                                   shrewMove DUp gstate
-                        | lastMove gstate == DRight                          = if not (shrewTouchAnyCar (xshrew - 30) yshrew gstate) then
-                                                                                 shrewMove DLeft gstate
-                                                                               else
-                                                                                 shrewMove DUp gstate
-                        | lastMove gstate == DLeft                           = if not (shrewTouchAnyCar (xshrew + 30) yshrew gstate) then
-                                                                                 shrewMove DRight gstate
-                                                                               else
-                                                                                 shrewMove DUp gstate
-                        | otherwise                                          = gstate
-                          where xshrew = fst spos
-                                yshrew = snd spos
-                                spos   = shrew_pos gstate
-
-shrewMove :: Direction -> GameState -> GameState
-shrewMove d gstate = case d of
-                       DUp    -> (moveY Shrew   30  gstate) { shrew_rot =   0, moveTimer = 0, lastMove = d }
-                       DRight -> (moveX Shrew   30  gstate) { shrew_rot =  90, moveTimer = 0, lastMove = d }
-                       DLeft  -> (moveX Shrew (-30) gstate) { shrew_rot = 270, moveTimer = 0, lastMove = d }
-
-shrewTouchAnyCar :: Float -> Float -> GameState -> Bool
-shrewTouchAnyCar x y gstate = any (shrewTouchCar x y) (allCars gstate)
-                   
---Checks if the shrew touches a car
-shrewTouchCar :: Float -> Float -> Car -> Bool
-shrewTouchCar xpos ypos (CarL x y _) = (ypos == y) && (xpos >= x - 45) && (xpos <= x + 45)
-shrewTouchCar xpos ypos (CarR x y _) = (ypos == y) && (xpos >= x - 45) && (xpos <= x + 45)
-shrewTouchCar _    _     _           = False
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState

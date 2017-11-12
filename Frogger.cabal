@@ -32,4 +32,5 @@ executable Frogger
                        Scores,
                        Frog,
                        Car,
-                       Movement
+                       Movement,
+                       Shrew

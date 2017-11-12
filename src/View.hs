@@ -2,13 +2,15 @@
 --   the game state into a picture
 module View where
 
-import Graphics.Gloss
-import Graphics.Gloss.Game
 import Model
 import Types
 import Scores
 import Frog
 import Car
+import Shrew
+
+import Graphics.Gloss
+import Graphics.Gloss.Game
 
 view :: GameState -> IO Picture
 view gstate | highScreen gstate = do
@@ -24,11 +26,6 @@ viewPure gstate | highScreen gstate       = highScoreScreen
                 | status gstate == Paused = pictures (gameV : [pauseScreen])
                 | otherwise               = gameV
                   where gameV = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [shrew gstate] ++ [viewCars gstate] ++ [frog gstate]))
-
-shrew :: GameState -> Picture
-shrew gstate = translate (fst pos) (snd pos) (rotate (shrew_rot gstate) shrewi)
-  where pos    = shrew_pos gstate
-        shrewi = png "src/sprite/shrew.png"
 
 --Returns a list of pictures of different lanes
 lanes :: [Lane] -> [Picture]

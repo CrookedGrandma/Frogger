@@ -3,20 +3,9 @@ module Frog where
 import Model
 import Types
 import Car
+
 import Graphics.Gloss
 import Graphics.Gloss.Game
-
---Returns a picture of a frog on the position of the frog
-frog :: GameState -> Picture
-frog gstate = translate (fst pos) (snd pos) (rotate (frog_rot gstate) frogi)
-  where pos   = frog_pos gstate
-        frogi = png ("src/sprite/" ++ frog_png gstate)
-        
---Returns the gamestate with a normal frog unless the player is losing, then returns a short animation
-frogPNG :: Float -> GameState -> GameState
-frogPNG secs gstate | status gstate == InProgress = gstate { frog_png = "frog.png" }
-                    | status gstate == Won        = gstate { frog_png = "frog.png" }
-                    | otherwise                   = losingFrog (gstate { loseTimer = loseTimer gstate + secs })
 
 --Cycles through animation images
 losingFrog :: GameState -> GameState
@@ -38,3 +27,15 @@ frogTouchCar :: Float -> Float -> Car -> Bool
 frogTouchCar xpos ypos (CarL x y _) = (ypos == y) && (xpos >= x - 45) && (xpos <= x + 45)
 frogTouchCar xpos ypos (CarR x y _) = (ypos == y) && (xpos >= x - 45) && (xpos <= x + 45)
 frogTouchCar _    _     _           = False
+
+--Returns the gamestate with a normal frog unless the player is losing, then returns a short animation
+frogPNG :: Float -> GameState -> GameState
+frogPNG secs gstate | status gstate == InProgress = gstate { frog_png = "frog.png" }
+            | status gstate == Won        = gstate { frog_png = "frog.png" }
+            | otherwise                   = losingFrog (gstate { loseTimer = loseTimer gstate + secs })
+
+--Returns a picture of a frog on the position of the frog
+frog :: GameState -> Picture
+frog gstate = translate (fst pos) (snd pos) (rotate (frog_rot gstate) frogi)
+  where pos   = frog_pos gstate
+        frogi = png ("src/sprite/" ++ frog_png gstate)
