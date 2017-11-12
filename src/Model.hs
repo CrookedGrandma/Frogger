@@ -20,12 +20,14 @@ data GameState = GameState {
                  , started     :: Bool
                  }
 
+--The level/game is made
 initialState :: GameState
 initialState = GameState 0 (0, (-195)) 0 (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False
 
 almostInitialState :: GameState -> GameState
 almostInitialState gstate = initialState { elapsedTime = elapsedTime gstate }
 
+--I do not understand what this does
 rands :: GameState -> [Float]
 rands gstate = randoms (mkStdGen (ceiling (elapsedTime gstate)))
 
