@@ -13,7 +13,7 @@ view gstate | highScreen gstate = do
                                   let gameScreen = viewPure gstate
                                   scores <- pictureScores
                                   return (pictures (gameScreen : [scores]))
-            | otherwise         = return (viewPure gstate)
+            | otherwise         = return (pictures (viewPure gstate : [pictureScore gstate]))
 
 --All the things that are eventually put on the screen
 viewPure :: GameState -> Picture

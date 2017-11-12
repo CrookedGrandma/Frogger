@@ -38,3 +38,7 @@ pictureScores = do
 scores :: [String] -> Float -> Int -> [Picture]
 scores [] _ _     = []
 scores (x:xs) y p = translate (-100) y (scale 0.5 0.5 (text (show p ++ ". " ++ x))) : scores xs (y-69) (p+1)
+
+--Returns the current score as picture
+pictureScore :: GameState -> Picture
+pictureScore gstate = translate (-200) (-200) (scale 0.3 0.3 (text (show (calcScore gstate))))
