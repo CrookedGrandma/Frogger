@@ -28,4 +28,5 @@ executable Frogger
                        Model,
                        View,
                        Parser,
-                       Types
+                       Types,
+                       Scores

@@ -4,12 +4,11 @@ module Controller where
 
 import Model
 import Types
+import Scores
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
-import System.Directory
-import Data.List
 
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
@@ -20,28 +19,12 @@ step secs gstate
   | status gstate == Paused     = return gstate
   | status gstate == Won        = if not (savedScore gstate) then 
                                     do
-                                    oldscores <- readFile "src/score/score.txt"
-                                    writeFile "src/score/newscore.txt" (newScores gstate oldscores)
-                                    removeFile "src/score/score.txt"
-                                    renameFile "src/score/newscore.txt" "src/score/score.txt"
+                                    writeScores gstate
                                     return gstate { savedScore = True }
                                   else
                                     return gstate
   | otherwise                   = return (frogPNG secs stepGState)
     where stepGState = gstate { elapsedTime = elapsedTime gstate + secs, cars = moveCars gstate }
-
---Determines what to write in the list of scores
-newScores :: GameState -> String -> String
-newScores gstate s = unlines (map show (sortBy (flip compare) (yourScore : map convert (lines s))))
-                     where yourScore = calcScore gstate
-
---Convert string to int
-convert :: String -> Int
-convert s = let i = read s :: Int in i
-
---Calculates the end score based on amount of lanes, amount of fails, and elapsed time
-calcScore :: GameState -> Int
-calcScore gstate = score gstate - loseScore gstate - floor (elapsedTime gstate) * 2
 
 --Returns the gamestate with a normal frog unless the player is losing, then returns a short animation
 frogPNG :: Float -> GameState -> GameState
@@ -120,6 +103,7 @@ inputKey (EventKey (SpecialKey k) Down _ _) gstate
   | otherwise                                    = gstate
 inputKey (EventKey (Char k) Down _ _) gstate
   | k == 'p'                                     = pause gstate
+  | k == 'h'                                     = pause gstate { highScreen = not (highScreen gstate)}
   | otherwise                                    = gstate
 inputKey _ gstate                                = gstate
 

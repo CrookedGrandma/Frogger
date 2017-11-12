@@ -22,11 +22,12 @@ data GameState = GameState {
                  , loseScore   :: Int
                  , highestY    :: Float
                  , savedScore  :: Bool
+                 , highScreen  :: Bool
                  }
 
 --The level/game is made
 initialState :: GameState
-initialState = GameState 0 (0, (-195)) 0 "frog.png" (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False 0 1 0 0 0 False
+initialState = GameState 0 (0, (-195)) 0 "frog.png" (parseLevel "nrRrRnlLlLnRLlnlnlnlnlnf") InProgress 0 [[]] False 0 1 0 0 0 False False
 
 almostInitialState :: GameState -> GameState
 almostInitialState gstate = initialState { elapsedTime = elapsedTime gstate }
@@ -35,9 +36,13 @@ almostInitialState gstate = initialState { elapsedTime = elapsedTime gstate }
 rands :: GameState -> [Float]
 rands gstate = randoms (mkStdGen (ceiling (elapsedTime gstate)))
 
--- Random number from 1 to x, at rands index y
+--Random number from 1 to x, at rands index y
 randomIntTo :: Int -> GameState -> Int -> Int
 randomIntTo x gstate y = ceiling ((rands gstate !! y) * fromIntegral x)
--- Random number from 1 to x, at rands index y
+--Random number from 1 to x, at rands index y
 randomFloatTo :: Float -> GameState -> Float -> Float
 randomFloatTo x gstate y = fromIntegral (ceiling ((rands gstate !! ceiling y) * x))
+
+--Convert string to int
+convert :: String -> Int
+convert s = let i = read s :: Int in i

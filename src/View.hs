@@ -6,13 +6,19 @@ import Graphics.Gloss
 import Graphics.Gloss.Game
 import Model
 import Types
+import Scores
 
 view :: GameState -> IO Picture
-view = return . viewPure
+view gstate | highScreen gstate = do
+                                  let gameScreen = viewPure gstate
+                                  scores <- pictureScores
+                                  return (pictures (gameScreen : [scores]))
+            | otherwise         = return (viewPure gstate)
 
 --All the things that are eventually put on the screen
 viewPure :: GameState -> Picture
 viewPure gstate | status gstate == Won    = winScreen
+                | highScreen gstate       = highScoreScreen
                 | status gstate == Paused = pictures (gameV : [pauseScreen])
                 | otherwise               = gameV
                   where gameV = translate 0 (camera gstate) (pictures (lanes (level gstate) ++ [viewCars gstate] ++ [frog gstate]))
@@ -41,6 +47,9 @@ winScreen = png "src/sprite/win.png"
 
 pauseScreen :: Picture
 pauseScreen = png "src/sprite/pause.png"
+
+highScoreScreen :: Picture
+highScoreScreen = png "src/sprite/high.png"
 
 --Produces a picture containing a picture for every car
 viewCars :: GameState -> Picture
