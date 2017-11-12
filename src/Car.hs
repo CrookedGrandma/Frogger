@@ -7,12 +7,11 @@ import Graphics.Gloss.Game
 
 --Produce a list of cars for every lane
 generateCars :: [Lane] -> GameState -> [[Car]]
-generateCars (x:xs) gstate | null xs   = [[]]
-                           | otherwise = generateCars' x gstate : generateCars xs gstate
+generateCars ls gstate = map (generateCars' gstate) ls
 
 --Puts the generated cars on the lane
-generateCars' :: Lane -> GameState -> [Car]
-generateCars' lane gstate = case lane of
+generateCars' :: GameState -> Lane -> [Car]
+generateCars' gstate lane = case lane of
                             NoCars    _ -> []
                             Finish    _ -> []
                             LeftSlow  y -> [CarL (-(randomFloatTo 560 gstate (y+210))) y 1, CarL (-(randomFloatTo 560 gstate (y+211))) y 1, CarL (-(randomFloatTo 560 gstate (y+212))) y 1]
