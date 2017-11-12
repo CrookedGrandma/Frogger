@@ -18,7 +18,7 @@ import System.Random
 step :: Float -> GameState -> IO GameState
 step secs gstate
   | not (started gstate)        = return gstate { cars = generateCars (level gstate) gstate, highestY = snd (frog_pos gstate), started = True }
-  | status gstate == InProgress = return (handleShrew secs (frogPNG secs (stepGState { status = frogTouchAnyCar gstate })))
+  | status gstate == InProgress = return (handleShrew secs (frogPNG secs ((stepGState { status = frogTouchAnyCar gstate }) { status = frogTouchShrew gstate })))
   | status gstate == Lost       = return (almostInitialState gstate) { loseScore = loseScore gstate + 10}
   | status gstate == Paused     = return gstate
   | status gstate == Won        = if not (savedScore gstate) then 

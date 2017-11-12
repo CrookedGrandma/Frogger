@@ -18,15 +18,27 @@ frogTouchAnyCar :: GameState -> LevelStatus
 frogTouchAnyCar gstate | status gstate == Losing                       = Losing
                        | any (frogTouchCar xpos ypos) (allCars gstate) = Losing
                        | otherwise                                     = status gstate
-                            where xpos = fst pos
-                                  ypos = snd pos
-                                  pos  = frog_pos gstate
+                         where xpos = fst pos
+                               ypos = snd pos
+                               pos  = frog_pos gstate
 
 --Checks if the frog touches a car
 frogTouchCar :: Float -> Float -> Car -> Bool
 frogTouchCar xpos ypos (CarL x y _) = (ypos == y) && (xpos >= x - 45) && (xpos <= x + 45)
 frogTouchCar xpos ypos (CarR x y _) = (ypos == y) && (xpos >= x - 45) && (xpos <= x + 45)
 frogTouchCar _    _     _           = False
+
+--Checks if the frog touches the shrew
+frogTouchShrew :: GameState -> LevelStatus
+frogTouchShrew gstate | status gstate == Losing                                               = Losing
+                      | (yfrog == yshrew) && (xfrog >= xshrew - 30) && (xfrog <= xshrew + 30) = Losing
+                      | otherwise                                                             = status gstate
+                        where xshrew = fst spos
+                              yshrew = snd spos
+                              spos   = shrew_pos gstate
+                              xfrog  = fst fpos
+                              yfrog  = snd fpos
+                              fpos   = frog_pos gstate
 
 --Returns the gamestate with a normal frog unless the player is losing, then returns a short animation
 frogPNG :: Float -> GameState -> GameState
