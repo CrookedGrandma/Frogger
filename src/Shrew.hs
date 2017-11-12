@@ -44,12 +44,14 @@ handleShrew secs gstate | shrewTimer gstate < 5                              = g
                                 yfrog  = snd fpos
                                 fpos   = frog_pos gstate
 
+--Move the shrew x steps in direction d
 shrewMove :: Direction -> Float -> GameState -> GameState
 shrewMove d x gstate = case d of
                          DUp    -> (moveY Shrew   x  gstate) { shrew_rot =   0, moveTimer = 0, lastMove = d }
                          DRight -> (moveX Shrew   x  gstate) { shrew_rot =  90, moveTimer = 0, lastMove = d }
                          DLeft  -> (moveX Shrew (-x) gstate) { shrew_rot = 270, moveTimer = 0, lastMove = d }
 
+--Checks if the shrew would touch any car if it moved to position (x,y)
 shrewTouchAnyCar :: Float -> Float -> GameState -> Bool
 shrewTouchAnyCar x y gstate = any (shrewTouchCar x y) (allCars gstate)
                    
@@ -59,6 +61,7 @@ shrewTouchCar xpos ypos (CarL x y _) = (ypos == y) && (xpos >= x - 45) && (xpos 
 shrewTouchCar xpos ypos (CarR x y _) = (ypos == y) && (xpos >= x - 45) && (xpos <= x + 45)
 shrewTouchCar _    _     _           = False
 
+--Returns a picture of a shrew on the position of the shrew
 shrew :: GameState -> Picture
 shrew gstate = translate (fst pos) (snd pos) (rotate (shrew_rot gstate) shrewi)
   where pos    = shrew_pos gstate

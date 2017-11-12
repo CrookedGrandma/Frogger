@@ -17,8 +17,10 @@ import System.Random
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
 step secs gstate
+  | status gstate == Intro      = return gstate
   | not (started gstate)        = return gstate { cars = generateCars (level gstate) gstate, highestY = snd (frog_pos gstate), started = True }
-  | status gstate == InProgress = return (handleShrew secs (frogPNG secs ((stepGState { status = frogTouchAnyCar gstate }) { status = frogTouchShrew gstate })))
+  | status gstate == InProgress = let state = (stepGState { status = frogTouchAnyCar gstate })
+                                  in return (handleShrew secs (frogPNG secs (state { status = frogTouchShrew state })))
   | status gstate == Lost       = return (almostInitialState gstate) { loseScore = loseScore gstate + 10}
   | status gstate == Paused     = return gstate
   | status gstate == Won        = if not (savedScore gstate) then 
@@ -44,6 +46,7 @@ inputKey (EventKey (SpecialKey k) Down _ _) gstate
 inputKey (EventKey (Char k) Down _ _) gstate
   | k == 'p'                                     = pause gstate
   | k == 'h'                                     = pause gstate { highScreen = not (highScreen gstate)}
+  | k == 's' && status gstate == Intro           = gstate { status = InProgress }
   | otherwise                                    = gstate
 inputKey _ gstate                                = gstate
 

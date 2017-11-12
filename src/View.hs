@@ -22,6 +22,7 @@ view gstate | highScreen gstate = do
 --All the things that are eventually put on the screen
 viewPure :: GameState -> Picture
 viewPure gstate | highScreen gstate       = highScoreScreen
+                | status gstate == Intro  = introScreen
                 | status gstate == Won    = winScreen
                 | status gstate == Paused = pictures (gameV : [pauseScreen])
                 | otherwise               = gameV
@@ -40,6 +41,9 @@ lanes (x:xs) = case x of
 
 
 --Just pictures
+introScreen :: Picture
+introScreen = png "src/sprite/intro.png"
+
 winScreen :: Picture
 winScreen = png "src/sprite/win.png"
 
