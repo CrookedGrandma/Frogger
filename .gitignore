@@ -16,6 +16,7 @@ cabal.sandbox.config
 *.hp
 *.eventlog
 .stack-work/
+score.txt
 
 # =========================
 # Operating System Files
